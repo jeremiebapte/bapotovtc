@@ -1,35 +1,39 @@
 package com.bapoto.vtc.ui;
 
-import android.annotation.SuppressLint;
+import static android.content.ContentValues.TAG;
+
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bapoto.bapoto.R;
-import com.bapoto.bapoto.databinding.ActivityReservationBinding;
+import com.bapoto.vtc.manager.ReservationManager;
 import com.bapoto.vtc.manager.UserManager;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class ReservationActivity extends AppCompatActivity {
     private final UserManager userManager = UserManager.getInstance();
-    private EditText editText;
+    private final ReservationManager reservationManager = ReservationManager.getInstance();
+
     private DatePickerDialog datePickerDialog;
     private Button dateButton;
     Button timeButton;
@@ -47,66 +51,66 @@ public class ReservationActivity extends AppCompatActivity {
         timeButton = findViewById(R.id.timeButton);
 
 
-        Button button = findViewById(R.id.boutonNom);
-        EditText saisieNom = findViewById(R.id.ChampNom);
-        EditText saisieTel = findViewById(R.id.champTel);
-        EditText saisieDestination = findViewById(R.id.ChampDestination);
-        EditText saisieRdv = findViewById(R.id.ChampRDV);
+        Button button = findViewById(R.id.resaButton);
+        EditText saisieNom = findViewById(R.id.inputName);
+        EditText saisieTel = findViewById(R.id.inputPhone);
+        EditText saisieDestination = findViewById(R.id.inputDestination);
+        EditText saisieRdv = findViewById(R.id.inputPickUp);
         //Button saisieDate = findViewById(R.id.datePickerButton);
         //Button saisieHeure = findViewById(R.id.timeButton);
-        EditText saisieInfos = findViewById(R.id.ChampInfos);
+        EditText saisieInfos = findViewById(R.id.inputInfo);
 
+        button.setOnClickListener(view -> {
+            //Champs Obligatoire
+            String nom = saisieNom.getText().toString();
+            String tel = saisieTel.getText().toString();
+            String desti = saisieDestination.getText().toString();
+            String rdv = saisieRdv.getText().toString();
+            String date = dateButton.getText().toString();
+            String heure = timeButton.getText().toString();
+            String infos = saisieInfos.getText().toString();
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                //Champs Obligatoire
-                String nom = saisieNom.getText().toString();
-                String tel = saisieTel.getText().toString();
-                String desti = saisieDestination.getText().toString();
-                String rdv = saisieRdv.getText().toString();
-                String date = dateButton.getText().toString();
-                String heure = timeButton.getText().toString();
-                String infos = saisieInfos.getText().toString();
-
-                if (nom.isEmpty()) {
-                    presentModal("Veuillez saisir votre Nom");
-                    return;
-                }
-
-                if (tel.isEmpty()) {
-                    presentModal("Veuillez saisir votre Numéro de Téléphone");
-                    return;
-                }
-
-                if (desti.isEmpty()) {
-                    presentModal("Veuillez saisir votre Destination");
-                    return;
-                }
-                if (rdv.isEmpty()) {
-                    presentModal("Veuillez saisir le Lieu du RDV");
-                    return;
-                }
-                if (date.isEmpty()) {
-                    presentModal("Veuillez saisir la Date");
-                    return;
-                }
-                if (heure.isEmpty()) {
-                    presentModal("Veuillez saisir l'Heure");
-                    return;
-                }
-
-
-                navigateToSummary(nom, tel, desti, rdv, date, heure, infos);
-
-
+            if (nom.isEmpty()) {
+                presentModal("Veuillez saisir votre Nom");
+                return;
             }
+            if (tel.isEmpty()) {
+                presentModal("Veuillez saisir votre Numéro de Téléphone");
+                return;
+            }
+            if (desti.isEmpty()) {
+                presentModal("Veuillez saisir votre Destination");
+                return;
+            }
+            if (rdv.isEmpty()) {
+                presentModal("Veuillez saisir le Lieu du RDV");
+                return;
+            }
+            if (date.isEmpty()) {
+                presentModal("Veuillez saisir la Date");
+                return;
+            }
+            if (heure.isEmpty()) {
+                presentModal("Veuillez saisir l'Heure");
+                return;
+            }
+
+
+            navigateToSummary(nom, tel, desti, rdv, date, heure, infos);
+
+
         });
 
-    }
 
-    @Override
+
+                    }
+
+
+
+
+
+
+   /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.reservation_menu, menu);
         return true;
@@ -119,7 +123,7 @@ public class ReservationActivity extends AppCompatActivity {
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     private void navigateToSummary(String nom, String tel, String destination, String rdv,
                                    String date, String heure, String infos) {
@@ -146,13 +150,10 @@ public class ReservationActivity extends AppCompatActivity {
     }
 
     private void initDatepicker() {
-        DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int day, int month, int year) {
-                month = month + 1;
-                String date = makeDateString(day, month, year);
-                dateButton.setText(date);
-            }
+        DatePickerDialog.OnDateSetListener dateSetListener = (view, day, month, year) -> {
+            month = month + 1;
+            String date = makeDateString(day, month, year);
+            dateButton.setText(date);
         };
         Calendar cal = Calendar.getInstance();
         int year = cal.get(Calendar.YEAR);
@@ -203,10 +204,8 @@ public class ReservationActivity extends AppCompatActivity {
 
     private void presentModal(String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User clicked OK button
-            }
+        builder.setPositiveButton("OK", (dialog, id) -> {
+            // User clicked OK button
         });
         builder.setTitle("OUPS...");
         builder.setMessage(message);
@@ -215,13 +214,10 @@ public class ReservationActivity extends AppCompatActivity {
     }
 
     public void popTimePicker(View view) {
-        TimePickerDialog.OnTimeSetListener onTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int selectedHour, int selectedMinute) {
-                hour = selectedHour;
-                minute = selectedMinute;
-                timeButton.setText(String.format(Locale.getDefault(), "%02d:%02d", hour, minute));
-            }
+        TimePickerDialog.OnTimeSetListener onTimeSetListener = (view1, selectedHour, selectedMinute) -> {
+            hour = selectedHour;
+            minute = selectedMinute;
+            timeButton.setText(String.format(Locale.getDefault(), "%02d:%02d", hour, minute));
         };
         TimePickerDialog timePickerDialog = new TimePickerDialog(this, onTimeSetListener,
                 hour, minute, true);
@@ -231,7 +227,7 @@ public class ReservationActivity extends AppCompatActivity {
     }
 
     private void setTextUserData(FirebaseUser user) {
-        EditText saisieNom = findViewById(R.id.ChampNom);
+        EditText saisieNom = findViewById(R.id.inputName);
 
         //Get username from User
         String username = TextUtils.isEmpty(user.getDisplayName()) ? getString(R.string.info_no_username_found) : user.getDisplayName();
@@ -249,5 +245,7 @@ public class ReservationActivity extends AppCompatActivity {
             //getUserData();
         }
     }
+
+
 }
 

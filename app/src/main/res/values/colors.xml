@@ -16,7 +16,11 @@
         <color name="colorSandLight">#ECDAAF</color>
         <color name="colorSand">#EBCB94</color>
 
+<array name="colorPagesViewPager">
+    <item>#ECDAAF</item>
+    <item>#EBCB94</item>
 
+</array>
 
 
 </resources>

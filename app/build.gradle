@@ -43,6 +43,8 @@ android {
 
 dependencies {
 
+
+    implementation 'com.google.android.material:material:1.5.0'
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation "androidx.coordinatorlayout:coordinatorlayout:1.2.0"
@@ -51,6 +53,9 @@ dependencies {
     implementation "androidx.cardview:cardview:1.0.0"
     implementation "androidx.recyclerview:recyclerview:1.2.1"
     implementation 'com.google.android.material:material:1.5.0'
+    implementation 'com.google.android.gms:play-services-maps:18.0.2'
+    implementation 'com.google.android.libraries.places:places:2.6.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.13.2'
 
 
@@ -70,10 +75,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-firestore'
     implementation 'com.google.firebase:firebase-messaging'
-    implementation 'com.google.firebase:firebase-messaging:23.0.0'
-    implementation 'com.google.firebase:firebase-auth:21.0.1'
-    implementation 'com.google.firebase:firebase-firestore:24.0.1'
-    implementation 'com.google.firebase:firebase-analytics:20.1.0'
+    implementation 'com.google.firebase:firebase-messaging:23.0.2'
+    implementation 'com.google.firebase:firebase-auth:21.0.3'
+    implementation 'com.google.firebase:firebase-firestore:24.1.0'
+    implementation 'com.google.firebase:firebase-analytics:20.1.2'
 
     //EASY PERMISSIONS
     implementation 'pub.devrel:easypermissions:3.0.0'
@@ -89,7 +94,7 @@ dependencies {
 
     implementation 'androidx.multidex:multidex:2.0.1'
     //noinspection GradleCompatible,GradleCompatible
-    implementation 'com.android.support:recyclerview-v7:26.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
 
     //FACEBOOK
     implementation 'com.facebook.android:facebook-android-sdk:5.13.0'

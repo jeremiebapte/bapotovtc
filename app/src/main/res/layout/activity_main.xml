@@ -5,70 +5,49 @@
     android:id="@+id/layoutMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
+    android:background="@color/quantum_white_100"
     tools:context="com.bapoto.vtc.ui.MainActivity">
 
     <!--IMAGE VIEW BAPOTO VTC-->
-    <ImageView
-        android:layout_width="247dp"
-        android:layout_height="175dp"
-        android:layout_marginStart="56dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="57dp"
-        android:src="@drawable/bapologo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.509"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-         />
 
     <!-- TITLE BAPOTO VTC -->
-    <TextView
-        android:id="@+id/Title_main"
-        android:layout_width="344dp"
-        android:layout_height="91dp"
-        android:layout_marginStart="21dp"
-        android:layout_marginTop="200dp"
-        android:layout_marginEnd="21dp"
-        android:layout_marginBottom="253dp"
-        android:fontFamily="@font/bungee"
-        android:foregroundGravity="center"
-        android:gravity="center_horizontal"
-        android:text="@string/Home_Title"
-        android:textAlignment="center"
-        android:textColor="@color/yellow"
-        android:textSize="40sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.085" />
 
 
     <!-- BUTTONS CONTAINER -->
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="535dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/container_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
-        android:layout_width="372dp"
-        android:layout_height="214dp"
-        android:layout_marginStart="23dp"
-        android:layout_marginTop="440dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="77dp"
+        android:id="@+id/container_button"
+        android:layout_width="344dp"
+        android:layout_height="157dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintHorizontal_bias="0.485"
+        app:layout_constraintStart_toStartOf="parent">
 
         <!-- BUTTON LOGIN -->
-        <Button
+        <android.widget.Button
 
             android:id="@+id/loginButton"
             style="?android:attr/borderlessButtonStyle"
-            android:layout_width="329dp"
+            android:layout_width="296dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/default_margin"
-            android:background="@color/yellow"
+            android:background="@drawable/gradient_button"
             android:gravity="center"
             android:text="@string/connexion"
             android:textColor="@color/black"
@@ -79,14 +58,14 @@
             tools:layout_editor_absoluteY="551dp" />
 
         <!-- BUTTON CHAT -->
-        <Button
+        <android.widget.Button
 
             android:id="@+id/reservation_button"
             style="@style/Widget.AppCompat.Button"
-            android:layout_width="329dp"
-            android:layout_height="46dp"
+            android:layout_width="301dp"
+            android:layout_height="wrap_content"
             android:layout_margin="@dimen/default_margin"
-            android:background="#FFFFFF"
+            android:background="@drawable/gradient_button"
             android:gravity="center"
             android:text="@string/button_reservation"
             android:textColor="@color/black"

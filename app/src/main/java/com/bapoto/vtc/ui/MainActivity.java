@@ -1,8 +1,18 @@
 package com.bapoto.vtc.ui;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
+import android.app.FragmentManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.bapoto.bapoto.databinding.ActivityMainBinding;
@@ -11,6 +21,11 @@ import com.bapoto.vtc.manager.UserManager;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Arrays;
@@ -18,12 +33,16 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class MainActivity extends BaseActivity<ActivityMainBinding> {
+public class MainActivity extends BaseActivity<ActivityMainBinding> implements LocationListener {
+    private LocationManager lm;
     private static final int RC_SIGN_IN = 123;
+    private static final int PERMS_CALL = 7;
     private final UserManager userManager = UserManager.getInstance();
+    private MapFragment mapFragment;
+    private GoogleMap googleMap;
 
     @Override
-   protected ActivityMainBinding getViewBinding() {
+    protected ActivityMainBinding getViewBinding() {
         return ActivityMainBinding.inflate(getLayoutInflater());
     }
 
@@ -31,12 +50,24 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupListeners();
+        FragmentManager fragmentManager = getFragmentManager();
+        mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map);
     }
+
 
     @Override
     protected void onResume() {
         super.onResume();
         updateLoginButton();
+        checkPermissions();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (lm!=null) {
+            lm.removeUpdates(this);
+        }
     }
 
     // Update Login Button when activity is resuming
@@ -78,9 +109,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
         // Choose authentication providers
 
-        List<AuthUI.IdpConfig> providers = Arrays.asList(
-                new AuthUI.IdpConfig.FacebookBuilder().build(),
-                new AuthUI.IdpConfig.GoogleBuilder().build(),
+        List<AuthUI.IdpConfig> providers = Collections.singletonList(
                 new AuthUI.IdpConfig.EmailBuilder().build());
 
         // Launch the activity
@@ -103,9 +132,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     private void showSnackBar( String message){
         Snackbar.make(binding.layoutMain, message, Snackbar.LENGTH_SHORT).show();
     }
-
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -138,6 +164,83 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         }
     }
 
+    //-------------
+    // MAP
+    //-------------
+
+    //Method for Check the permission for connect to GPS
+    private void checkPermissions() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] {
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            },PERMS_CALL );
+            return;
+        }
+
+        lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, this);
+        }
+        if (lm.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, this);
+        }
+        if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, this);
+        }
+
+        loadMap();
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMS_CALL) {
+            checkPermissions();
+        }
+    }
+
+    @Override
+    public void onProviderEnabled(@NonNull String provider) {
+        LocationListener.super.onProviderEnabled(provider);
+    }
+
+    @Override
+    public void onProviderDisabled(@NonNull String provider) {
+        LocationListener.super.onProviderDisabled(provider);
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        LocationListener.super.onStatusChanged(provider, status, extras);
+    }
+
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+
+        if (googleMap != null) {
+            LatLng googleLocation = new LatLng(latitude,longitude);
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(googleLocation));
+
+        }
+
+    }
+    @SuppressWarnings("MissingPermission")
+    private void loadMap() {
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(@NonNull GoogleMap googleMap) {
+                MainActivity.this.googleMap = googleMap;
+                googleMap.moveCamera(CameraUpdateFactory.zoomTo(100));
+                googleMap.setMyLocationEnabled(true);
 
 
+            }
+        });
+    }
 }

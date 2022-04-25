@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Bapoto VTC</string>
     <string name="title_activity_home_page">ScrollingActivity</string>
-    <string name="large_text"/>
+    <string name="large_text" />
 
 
     <!-- MAIN ACTIVITY -->
@@ -20,10 +20,10 @@
     <string name="toolbar_title_devis_activity">Devis</string>
 
     <string name="text_input_username">Nom d\'utilisateur</string>
-    <string name="text_view_email">Adresse email :</string>
-    <string name="button_update_account">Mettre à jour le nom d\'utilisateur</string>
+    <string name="text_contact">Démarrer une Discussion</string>
+    <string name="button_all_reservations">Mes réservations passées</string>
     <string name="button_delete_account">Supprimer mon compte</string>
-    <string name="button_sign_out_account">Se Déconnecter</string>
+    <string name="button_sign_out_account">Déconnexion</string>
     <string name="button_reservation">Faire une Réservation</string>
 
     <string name="info_no_email_found">Aucune adresse email</string>
@@ -70,6 +70,13 @@
     <string name="facebook_application_id">205701438038321</string>
     <string name="fb_login_protocol_scheme">fb205701438038321</string>
     <string name="default_notification_channel_desc">this the canal</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
+
+
+        <!-- Used in NavigationDrawer -->
+        <string name="navigation_drawer_open">Open navigation drawer</string>
+        <string name="navigation_drawer_close">Close navigation drawer</string>
 
 </resources>

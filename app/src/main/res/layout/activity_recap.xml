@@ -155,7 +155,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/sndButtonR"
         android:layout_width="129dp"
         android:layout_height="48dp"
         android:layout_marginStart="@dimen/default_margin_start"
@@ -171,4 +171,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/arrive8" />
 
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+

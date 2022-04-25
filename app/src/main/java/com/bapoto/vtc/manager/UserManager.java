@@ -2,6 +2,7 @@ package com.bapoto.vtc.manager;
 
 import android.content.Context;
 
+import com.bapoto.vtc.fragments.ProfileFragment;
 import com.bapoto.vtc.model.User;
 import com.bapoto.vtc.repository.UserRepository;
 import com.google.android.gms.tasks.Task;
@@ -42,6 +43,7 @@ public class UserManager {
 
 
 
+
     public void createUser(){
         userRepository.createUser();
     }
@@ -65,6 +67,7 @@ public class UserManager {
             userRepository.deleteUserFromFirestore();
         });
     }
+
 
 }
 
