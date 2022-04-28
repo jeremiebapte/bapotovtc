@@ -9,6 +9,7 @@ import android.Manifest;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -104,7 +105,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements L
     }
 
 
-
+    // Signin activity handled by Google
     private void startSignInActivity(){
 
         // Choose authentication providers
@@ -182,13 +183,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements L
         lm = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, this);
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, this);
         }
         if (lm.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, this);
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, this);
         }
         if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, this);
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, this);
         }
 
         loadMap();
@@ -225,7 +226,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements L
 
         if (googleMap != null) {
             LatLng googleLocation = new LatLng(latitude,longitude);
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(googleLocation));
+            googleMap.animateCamera(CameraUpdateFactory.newLatLng(googleLocation));
+            googleMap.getMaxZoomLevel();
 
         }
 
@@ -236,7 +238,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements L
             @Override
             public void onMapReady(@NonNull GoogleMap googleMap) {
                 MainActivity.this.googleMap = googleMap;
-                googleMap.moveCamera(CameraUpdateFactory.zoomTo(100));
+                googleMap.animateCamera(CameraUpdateFactory.zoomTo(16));
                 googleMap.setMyLocationEnabled(true);
 
 

@@ -11,7 +11,7 @@
             android:title="Profil" />
     </group>
 
-    <item android:title="Configuration">
+    <item android:title="Menu">
         <menu>
             <group android:checkableBehavior="single">
                 <item
